@@ -23,6 +23,22 @@ builder.Services.AddApplicationServices(builder.Configuration);
 
 var app = builder.Build();
 
+using var scope = app.Services.CreateAsyncScope();
+var services = scope.ServiceProvider;
+
+try
+{
+    var context = services.GetRequiredService<DataContext>();
+    await context.Database.MigrateAsync();
+    await Seed.SeedUsers(context);
+}
+catch(Exception ex)
+{
+    var logger = services.GetRequiredService<ILogger>;
+    //logger.LogError(ex, "An error occured during migration");
+}
+
+
 // Configure the HTTP request pipeline.
 // if (app.Environment.IsDevelopment())
 // {
@@ -41,4 +57,4 @@ app.UseAuthorization();
 
 app.MapControllers();
 
-app.Run();
+await app.RunAsync();
