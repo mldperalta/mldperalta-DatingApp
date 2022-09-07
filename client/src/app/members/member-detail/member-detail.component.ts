@@ -18,7 +18,6 @@ export class MemberDetailComponent implements OnInit {
 
   ngOnInit(): void {
     this.loadMember();
-
     this.galleryOptions = [
       {
         width: '500px',
