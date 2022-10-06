@@ -84,6 +84,53 @@ namespace API.Data.Migrations
                     b.ToTable("Users");
                 });
 
+            modelBuilder.Entity("API.Model.Message", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<string>("Content")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("DateRead")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("MessageSent")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("RecipientDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<int>("RecipientId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("RecipientUsername")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("SenderDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<int>("SenderId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("SenderUsername")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("RecipientId");
+
+                    b.HasIndex("SenderId");
+
+                    b.ToTable("Messages");
+                });
+
             modelBuilder.Entity("API.Model.Photo", b =>
                 {
                     b.Property<int>("Id")
@@ -126,6 +173,25 @@ namespace API.Data.Migrations
                     b.ToTable("Likes");
                 });
 
+            modelBuilder.Entity("API.Model.Message", b =>
+                {
+                    b.HasOne("API.Model.AppUser", "Recipient")
+                        .WithMany("MessagesReceived")
+                        .HasForeignKey("RecipientId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("API.Model.AppUser", "Sender")
+                        .WithMany("MessagesSent")
+                        .HasForeignKey("SenderId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Recipient");
+
+                    b.Navigation("Sender");
+                });
+
             modelBuilder.Entity("API.Model.Photo", b =>
                 {
                     b.HasOne("API.Model.AppUser", "AppUser")
@@ -161,6 +227,10 @@ namespace API.Data.Migrations
                     b.Navigation("LikedByUsers");
 
                     b.Navigation("LikedUsers");
+
+                    b.Navigation("MessagesReceived");
+
+                    b.Navigation("MessagesSent");
 
                     b.Navigation("Photos");
                 });
