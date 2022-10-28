@@ -2,6 +2,7 @@ using API.Data;
 using API.Extensions;
 using API.Middleware;
 using API.Model;
+using API.SignalR;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
@@ -15,6 +16,7 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddCors();
 builder.Services.AddIdentityServices(builder.Configuration);
+builder.Services.AddSignalR();
 
 builder.Services.AddApplicationServices(builder.Configuration);
 
@@ -55,5 +57,7 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
+app.MapHub<PresenceHub>("hubs/presence");
+app.MapHub<MessageHub>("hubs/message");
 
 await app.RunAsync();
